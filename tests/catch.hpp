@@ -240,7 +240,7 @@ namespace Catch {
 // Visual C++
 #if defined(_MSC_VER)
 
-// Universal Windows platform does not support SEH
+// Universal Windows Platform does not support SEH
 // Or console colours (or console at all...)
 #  if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #    define CATCH_CONFIG_COLOUR_NONE
@@ -2192,7 +2192,7 @@ namespace Catch { \
 #pragma warning(push)
 #pragma warning(disable:4389) // '==' : signed/unsigned mismatch
 #pragma warning(disable:4018) // more "signed/unsigned mismatch"
-#pragma warning(disable:4312) // Converting int to T* using reinterpret_cast (issue on x64 platform)
+#pragma warning(disable:4312) // Converting int to T* using reinterpret_cast (issue on x64 Platform)
 #pragma warning(disable:4180) // qualifier applied to function type has no meaning
 #pragma warning(disable:4800) // Forcing result to true or false
 #endif
@@ -8000,7 +8000,7 @@ namespace Catch {
 
 namespace Catch {
 
-    // Wrapper for platform-specific fatal error (signals/SEH) handlers
+    // Wrapper for Platform-specific fatal error (signals/SEH) handlers
     //
     // Tries to be cooperative with other handlers, and not step over
     // other handlers. This means that unknown structured exceptions
@@ -8011,13 +8011,13 @@ namespace Catch {
     class FatalConditionHandler {
         bool m_started = false;
 
-        // Install/disengage implementation for specific platform.
-        // Should be if-defed to work on current platform, can assume
+        // Install/disengage implementation for specific Platform.
+        // Should be if-defed to work on current Platform, can assume
         // engage-disengage 1:1 pairing.
         void engage_platform();
         void disengage_platform();
     public:
-        // Should also have platform-specific implementations as needed
+        // Should also have Platform-specific implementations as needed
         FatalConditionHandler();
         ~FatalConditionHandler();
 
