@@ -3,17 +3,20 @@ CXXFLAGS:=-Wall -Werror -Wextra -pedantic -std=c++17 -fopenmp
 RELEASEFLAGS:=-O3
 DEBUGFLAGS:=-g
 
-.PHONY: all clean
+.PHONY: all clean test
 all: submission
 
 submission: main.o
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o troons $^
 
-main.o: main.cc
+main.o: main.cpp
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -c $^
 
 clean:
-	$(RM) *.o troons
+	$(RM) *.o troons test
 
-debug: main.cc
-	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cc
+debug: main.cpp
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp
+
+test: tests/test.cpp
+	$(CXX) $(CXXFLAGS) -o test $^ && ./test
