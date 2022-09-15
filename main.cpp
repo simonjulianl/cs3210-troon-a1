@@ -18,21 +18,22 @@ void simulate(size_t num_stations,
               const vector<string> &blue_station_names, size_t ticks,
               size_t num_green_trains, size_t num_yellow_trains,
               size_t num_blue_trains, size_t num_lines) {
-    Simulator s{
-            num_stations,
-            station_names,
-            popularities,
-            mat,
-            green_station_names,
-            yellow_station_names,
-            blue_station_names,
-            ticks,
-            num_green_trains,
-            num_yellow_trains,
-            num_blue_trains,
-            num_lines
-    };
-
+    // still buggy, get out of index lol
+//    Simulator s{
+//            num_stations,
+//            station_names,
+//            popularities,
+//            mat,
+//            green_station_names,
+//            yellow_station_names,
+//            blue_station_names,
+//            ticks,
+//            num_green_trains,
+//            num_yellow_trains,
+//            num_blue_trains,
+//            num_lines
+//    };
+//
 //    s.Simulate();
     /**
      * Feel free to delete this printing code, or to wrap it in with #ifdef DEBUG
