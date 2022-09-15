@@ -65,7 +65,7 @@ private:
     void
     CreateWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities, const adjacency_matrix &mat);
 
-    void LinkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation);
+    void LinkStation(const string &previousStation, const string &currentStation, const string &nextStation);
 
     void AssembleLink(const vector<string> &stationNames);
 };

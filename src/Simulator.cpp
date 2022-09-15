@@ -20,7 +20,6 @@ Simulator::Simulator(
 
     CreateIdNameIdMapping(num_stations, station_names);
     CreateWaitingPlatformLink(num_stations, popularities, mat);
-
     AssembleLink(green_station_names);
     AssembleLink(yellow_station_names);
     AssembleLink(blue_station_names);
@@ -93,32 +92,31 @@ void Simulator::AssembleLink(const vector<string> &stationNames) {
         previousStation = stationNames[i - 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i + 1];
-        LinkStationMiddle(previousStation, currentStation, nextStation);
+        LinkStation(previousStation, currentStation, nextStation);
     }
 
     // the end of the forward direction
     previousStation = stationNames[num_trains - 2];
     currentStation = stationNames[num_trains - 1];
-    nextStation = stationNames[num_trains - 1];
-    LinkStationMiddle(previousStation, currentStation, nextStation);
+    nextStation = stationNames[num_trains - 2];
+    LinkStation(previousStation, currentStation, nextStation);
 
     // reverse direction
-    for (size_t i = num_trains - 2; i > 0; i++) {
+    for (size_t i = num_trains - 2; i > 0; i--) {
         previousStation = stationNames[i + 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i - 1];
-        LinkStationMiddle(previousStation, currentStation, nextStation);
+        LinkStation(previousStation, currentStation, nextStation);
     }
 
-    // the end of the reverse direction
     previousStation = stationNames[1];
     currentStation = stationNames[0];
     nextStation = stationNames[1];
-    LinkStationMiddle(previousStation, currentStation, nextStation);
+    LinkStation(previousStation, currentStation, nextStation);
 }
 
 void
-Simulator::LinkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation) {
+Simulator::LinkStation(const string &previousStation, const string &currentStation, const string &nextStation) {
     size_t prevId = stationNameIdMapping[previousStation];
     size_t currentId = stationNameIdMapping[currentStation];
     size_t nextId = stationNameIdMapping[nextStation];
