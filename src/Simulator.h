@@ -1,33 +1,41 @@
-//
-// Created by lauwsj on 15/9/22.
-//
-
 #ifndef CS3210_A1_A1_A0196678A_A0219768L_SIMULATOR_H
 #define CS3210_A1_A1_A0196678A_A0219768L_SIMULATOR_H
 
 #include <vector>
 #include <string>
 #include <map>
-#include "../Train/Troon.h"
+#include <tuple>
+#include "Troon.h"
+#include "PlatformUnit.h"
 
 using std::vector;
 using std::string;
 using std::map;
-using adjacency_matrix = std::vector<std::vector<size_t>>;
+using std::tuple;
+
+using adjacency_matrix = vector<vector<size_t>>;
 
 class Simulator {
 private:
     size_t ticks = 0;
-
-    size_t greenTroonSize;
-    size_t yellowTroonSize;
-    size_t blueTroonSize;
+    size_t linesToBePrinted = 0;
 
     vector<Troon> greenTroons;
     vector<Troon> yellowTroons;
     vector<Troon> blueTroons;
 
+    size_t maxGreenTroon;
+    size_t maxYellowTroon;
+    size_t maxBlueTroon;
+
     map<string, size_t> stationNameIdMapping;
+    map<size_t, string> stationIdNameMapping;
+
+    map<size_t, map<size_t, WaitingArea>> waitingAreaData;
+    map<size_t, map<size_t, Platform>> platformData;
+    map<size_t, map<size_t, Link>> linkData;
+
+    vector<std::mutex *> mutexArray; // to be freed
 
 public:
     Simulator(
@@ -46,6 +54,20 @@ public:
     );
 
     void SpawnTroons();
+
+    void Simulate();
+
+    void Clean();
+
+private:
+    void createIdNameIdMapping(size_t num_stations, const vector<string> &station_names);
+
+    void
+    createWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities, const adjacency_matrix &mat);
+
+    void linkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation);
+
+    void assembleLink(const vector<string> &stationNames);
 };
 
 

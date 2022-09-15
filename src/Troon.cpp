@@ -7,13 +7,13 @@ string Troon::GenerateDescription() const {
 
     switch (this->location) {
         case LINK:
-            currentLocation = source + "->" + destination;
+            currentLocation = source + "->" + destination + " ";
             break;
         case PLATFORM:
-            currentLocation = source + "%";
+            currentLocation = source + "% ";
             break;
         case WAITING_AREA:
-            currentLocation = source + "#";
+            currentLocation = source + "# ";
             break;
     }
 
@@ -29,5 +29,5 @@ string Troon::GenerateDescription() const {
             break;
     }
 
-    return currentLine + std::to_string(this->id) + "-" + currentLocation;
+    return currentLine + std::to_string(id) + "-" + currentLocation;
 }
