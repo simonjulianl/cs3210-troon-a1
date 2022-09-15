@@ -12,13 +12,13 @@ submission: main.o
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o troons $^
 
 main.o: main.cpp
-	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -c $^
+	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -c $^ $(SOURCES)
 
 clean:
 	$(RM) *.o troons test
 
 debug: main.cpp
-	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp $(SOURCES)
 
-test: tests/test.cpp
+test: tests/test.cpp tests/catch.hpp
 	$(CXX) $(CXXFLAGS) -o test $^ $(SOURCES) && ./test
