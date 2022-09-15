@@ -60,14 +60,14 @@ public:
     void Clean();
 
 private:
-    void createIdNameIdMapping(size_t num_stations, const vector<string> &station_names);
+    void CreateIdNameIdMapping(size_t num_stations, const vector<string> &station_names);
 
     void
-    createWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities, const adjacency_matrix &mat);
+    CreateWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities, const adjacency_matrix &mat);
 
-    void linkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation);
+    void LinkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation);
 
-    void assembleLink(const vector<string> &stationNames);
+    void AssembleLink(const vector<string> &stationNames);
 };
 
 

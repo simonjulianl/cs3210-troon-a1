@@ -18,12 +18,12 @@ Simulator::Simulator(
 ) : ticks{ticks}, linesToBePrinted{num_lines}, maxGreenTroon{num_green_trains}, maxYellowTroon{num_yellow_trains},
     maxBlueTroon{num_blue_trains} {
 
-    createIdNameIdMapping(num_stations, station_names);
-    createWaitingPlatformLink(num_stations, popularities, mat);
+    CreateIdNameIdMapping(num_stations, station_names);
+    CreateWaitingPlatformLink(num_stations, popularities, mat);
 
-    assembleLink(green_station_names);
-    assembleLink(yellow_station_names);
-    assembleLink(blue_station_names);
+    AssembleLink(green_station_names);
+    AssembleLink(yellow_station_names);
+    AssembleLink(blue_station_names);
 }
 
 void Simulator::Simulate() {
@@ -50,7 +50,7 @@ void Simulator::Simulate() {
     Clean();
 }
 
-void Simulator::createWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities,
+void Simulator::CreateWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities,
                                           const adjacency_matrix &mat) {
     for (size_t source = 0; source < num_stations; source++) {
         for (size_t destination = 0; destination < num_stations; destination++) {
@@ -77,14 +77,14 @@ void Simulator::createWaitingPlatformLink(size_t num_stations, const vector<size
     }
 }
 
-void Simulator::createIdNameIdMapping(size_t num_stations, const vector<string> &station_names) {
+void Simulator::CreateIdNameIdMapping(size_t num_stations, const vector<string> &station_names) {
     for (size_t i = 0; i < num_stations; i++) {
         stationNameIdMapping[station_names[i]] = i;
         stationIdNameMapping[i] = station_names[i];
     }
 }
 
-void Simulator::assembleLink(const vector<string> &stationNames) {
+void Simulator::AssembleLink(const vector<string> &stationNames) {
     size_t num_trains = stationNames.size();
     string previousStation, currentStation, nextStation;
 
@@ -93,32 +93,32 @@ void Simulator::assembleLink(const vector<string> &stationNames) {
         previousStation = stationNames[i - 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i + 1];
-        linkStationMiddle(previousStation, currentStation, nextStation);
+        LinkStationMiddle(previousStation, currentStation, nextStation);
     }
 
     // the end of the forward direction
     previousStation = stationNames[num_trains - 2];
     currentStation = stationNames[num_trains - 1];
     nextStation = stationNames[num_trains - 1];
-    linkStationMiddle(previousStation, currentStation, nextStation);
+    LinkStationMiddle(previousStation, currentStation, nextStation);
 
     // reverse direction
     for (size_t i = num_trains - 2; i > 0; i++) {
         previousStation = stationNames[i + 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i - 1];
-        linkStationMiddle(previousStation, currentStation, nextStation);
+        LinkStationMiddle(previousStation, currentStation, nextStation);
     }
 
     // the end of the reverse direction
     previousStation = stationNames[1];
     currentStation = stationNames[0];
     nextStation = stationNames[1];
-    linkStationMiddle(previousStation, currentStation, nextStation);
+    LinkStationMiddle(previousStation, currentStation, nextStation);
 }
 
 void
-Simulator::linkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation) {
+Simulator::LinkStationMiddle(const string &previousStation, const string &currentStation, const string &nextStation) {
     size_t prevId = stationNameIdMapping[previousStation];
     size_t currentId = stationNameIdMapping[currentStation];
     size_t nextId = stationNameIdMapping[nextStation];

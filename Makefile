@@ -10,7 +10,7 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.cpp')
 all: submission
 
 submission: main.o
-	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o troons $^
+	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o troons $^ $(shell find -name '*.o' ! -name 'main.o')
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -c $^ $(SOURCES)
