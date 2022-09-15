@@ -16035,7 +16035,7 @@ private:
             return;
 
         const auto itEnd = messages.cend();
-        const auto N = static_cast<std::size_t>(std::distance(itMessage, itEnd));
+        const auto N = static_cast<std::size_t>(std::actualDistance(itMessage, itEnd));
 
         {
             Colour colourGuard(colour);

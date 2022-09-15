@@ -3,7 +3,12 @@
 
 #include <mutex>
 #include <queue>
+#include <utility>
+#include <optional>
 #include "../Train/Troon.h"
+#include "../Platform/Platform.h"
+
+using namespace std::optional;
 
 class WaitingArea {
     /*
@@ -13,13 +18,18 @@ private:
     std::mutex mtx;
     std::priority_queue<Troon> troonPq;
 public:
-    WaitingArea() = default;
+    string source;
+    string destination;
+    optional<Platform> nextPlatform = std::nullopt;
 
-    void AddTroon(const Troon &troon);
+    WaitingArea(string source, string destination) : source{std::move(source)},
+                                                     destination{std::move(destination)} {};
 
-    Troon const &GetFrontTroon();
+    void AddTroon(Troon &troon);
 
     bool IsEmpty();
+
+    void ProcessWaitingArea();
 };
 
 

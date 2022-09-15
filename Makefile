@@ -1,5 +1,6 @@
 CXX=g++
 CXXFLAGS:=-Wall -Werror -Wextra -pedantic -std=c++17 -fopenmp
+TESTFLAGS:=-Wall -std=c++17 -fopenmp
 RELEASEFLAGS:=-O3
 DEBUGFLAGS:=-g
 SOURCEDIR=src
@@ -21,4 +22,4 @@ debug: main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp $(SOURCES)
 
 test: tests/test.cpp tests/catch.hpp
-	$(CXX) $(CXXFLAGS) -o test $^ $(SOURCES) && ./test
+	$(CXX) $(TESTFLAGS) -o test $^ $(SOURCES) && ./test
