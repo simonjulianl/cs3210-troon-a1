@@ -43,6 +43,8 @@ public:
     WaitingArea *nextWaYellow = nullptr;
     WaitingArea *nextWaBlue = nullptr;
 
+    size_t currentCounter = 0;
+
     size_t actualDistance = 0;
     size_t currentDistance = 0;
 
@@ -57,6 +59,8 @@ public:
     void AddTroon(Troon *t);
 
     bool IsNotFree() const;
+
+    bool SafeToGo() const;
 };
 
 class Platform {

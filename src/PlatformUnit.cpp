@@ -14,7 +14,7 @@ void Platform::ProcessPushPlatform() {
     size_t maxCounter = popularity + 2;
     bool isReadyToGo = currentCounter >= maxCounter;
 
-    if (!currentTroon || !isReadyToGo || nextLink->IsNotFree()) return;
+    if (!currentTroon || !isReadyToGo || nextLink->IsNotFree() || !nextLink->SafeToGo()) return;
 
     currentCounter = 0;
     nextLink->AddTroon(currentTroon);
@@ -37,8 +37,10 @@ bool Platform::HasTroon() const {
 }
 
 void Link::ProcessLink() {
-    // TODO: should wait for 1 tick after the link becomes free if there is a train before
-    if (!currentTroon) return;
+    if (!currentTroon) {
+        currentCounter++;
+        return;   
+    }
 
     if (currentDistance == (actualDistance - 1)) {
         switch (currentTroon->line) {
@@ -53,6 +55,7 @@ void Link::ProcessLink() {
                 break;
         }
         currentTroon = nullptr;
+        currentCounter = 0;
     } else {
         currentDistance++;
     }
@@ -71,6 +74,10 @@ void Link::AddTroon(Troon *t) {
 
 bool Link::IsNotFree() const {
     return currentTroon != nullptr;
+}
+
+bool Link::SafeToGo() const {
+    return currentCounter >= 1;
 }
 
 void WaitingArea::AddTroon(Troon *troon) {
