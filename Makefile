@@ -20,3 +20,6 @@ clean:
 
 debug: main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp $(SOURCES)
+
+test: tests/test.cpp tests/catch.hpp
+	$(CXX) $(TESTFLAGS) -o test $^ $(SOURCES) && ./test
