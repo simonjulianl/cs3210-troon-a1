@@ -1,14 +1,10 @@
 #ifndef CS3210_A1_A1_A0196678A_A0219768L_PLATFORMUNIT_H
 #define CS3210_A1_A1_A0196678A_A0219768L_PLATFORMUNIT_H
 
-#include <optional>
 #include <mutex>
 #include <queue>
 #include <utility>
-#include <optional>
 #include "Troon.h"
-
-using std::optional;
 
 class Platform;
 
@@ -17,52 +13,74 @@ class WaitingArea {
      * Multiple producers (from multiple links), 1 Consumer (the Platform attached to this WA)
      */
 private:
-    std::mutex *mtx;
-    std::priority_queue<Troon> troonPq;
+    struct TroonComparison {
+        bool operator()(const Troon *a, const Troon *b) const {
+            return a->id > b->id;
+        }
+    };
+
+
+    std::mutex mtx;
+    std::priority_queue<Troon *, std::deque<Troon *>, TroonComparison> troonPq;
 public:
     string source;
     string destination;
     Platform *nextPlatform = nullptr;
 
-    WaitingArea(string source, string destination, std::mutex *m) : mtx{m},
-                                                                    source{std::move(source)},
-                                                                    destination{std::move(destination)} {};
+    WaitingArea(string source, string destination) :
+            source{std::move(source)},
+            destination{std::move(destination)} {};
 
-    void AddTroon(Troon &troon);
-
-    bool IsEmpty() const;
+    void AddTroon(Troon *troon);
 
     void ProcessWaitingArea();
 };
 
 class Link {
 public:
-    optional<Troon> currentTroon = std::nullopt;
-    WaitingArea *nextWa = nullptr;
+    Troon *currentTroon = nullptr;
+    WaitingArea *nextWaGreen = nullptr;
+    WaitingArea *nextWaYellow = nullptr;
+    WaitingArea *nextWaBlue = nullptr;
 
     size_t actualDistance = 0;
     size_t currentDistance = 0;
 
-    explicit Link(size_t distance) : actualDistance{distance} {}
+    string source;
+    string destination;
+
+    Link(string source, string destination, size_t distance) : actualDistance{distance}, source{std::move(source)},
+                                                               destination{std::move(destination)} {}
 
     void ProcessLink();
 
-    void AddTroon(Troon &t);
+    void AddTroon(Troon *t);
+
+    bool IsNotFree() const;
 };
 
 class Platform {
 public:
-    optional<Troon> currentTroon = std::nullopt;
+    Troon *currentTroon = nullptr;
     Link *nextLink = nullptr;
 
     size_t popularity = 0;
     size_t currentCounter = 0;
 
-    explicit Platform(size_t popularity) : popularity{popularity} {};
+    string source;
+    string destination;
 
-    void ProcessPlatform();
+    Platform(string source, string destination, size_t popularity) : popularity{popularity},
+                                                                     source{std::move(source)},
+                                                                     destination{std::move(destination)} {};
 
-    void AddTroon(Troon &t);
+    void ProcessWaitPlatform();
+
+    void AddTroon(Troon *t);
+
+    bool HasTroon() const;
+
+    void ProcessPushPlatform();
 };
 
 #endif //CS3210_A1_A1_A0196678A_A0219768L_PLATFORMUNIT_H

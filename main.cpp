@@ -33,8 +33,8 @@ void simulate(size_t num_stations,
             num_blue_trains,
             num_lines
     };
-//
-//    s.Simulate();
+
+    s.Simulate();
     /**
      * Feel free to delete this printing code, or to wrap it in with #ifdef DEBUG
      * so that `make debug` will build it with the printing code but `make` will
@@ -42,6 +42,7 @@ void simulate(size_t num_stations,
      **/
 
     // #ifdef DEBUG
+    std::cout << "Input: " << std::endl;
     std::cout << num_stations << '\n';
 
     for (size_t i{}; i < num_stations; ++i) {

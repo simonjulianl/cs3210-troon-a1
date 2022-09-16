@@ -2,6 +2,8 @@
 #include <iostream>
 #include <sstream>
 
+using namespace std;
+
 Simulator::Simulator(
         size_t num_stations,
         const vector<string> &station_names,
@@ -20,25 +22,63 @@ Simulator::Simulator(
 
     CreateIdNameIdMapping(num_stations, station_names);
     CreateWaitingPlatformLink(num_stations, popularities, mat);
-    AssembleLink(green_station_names);
-    AssembleLink(yellow_station_names);
-    AssembleLink(blue_station_names);
+
+    AssembleLink(green_station_names, g);
+    WaitingArea *firstGreenTerminal, *lastGreenTerminal;
+    GetFirstLastTerminals(green_station_names, firstGreenTerminal, lastGreenTerminal);
+    terminalGreenForward = firstGreenTerminal;
+    terminalGreenBackward = lastGreenTerminal;
+
+    AssembleLink(yellow_station_names, y);
+    WaitingArea *firstYellowTerminal, *lastYellowTerminal;
+    GetFirstLastTerminals(yellow_station_names, firstYellowTerminal, lastYellowTerminal);
+    terminalYellowForward = firstYellowTerminal;
+    terminalYellowBackward = lastYellowTerminal;
+
+    AssembleLink(blue_station_names, b);
+    WaitingArea *firstBlueTerminal, *lastBlueTerminal;
+    GetFirstLastTerminals(blue_station_names, firstBlueTerminal, lastBlueTerminal);
+    terminalBlueForward = firstBlueTerminal;
+    terminalBlueBackward = lastBlueTerminal;
+}
+
+void Simulator::GetFirstLastTerminals(const vector<string> &station_names, WaitingArea *&firstTerminal,
+                                      WaitingArea *&lastTerminal) {
+
+    const string &firstGreenStation = station_names[0];
+    const string &secondGreenStation = station_names[1];
+
+    size_t firstId = stationNameIdMapping[firstGreenStation];
+    size_t secondId = stationNameIdMapping[secondGreenStation];
+
+    const string &lastGreenStation = station_names[station_names.size() - 1];
+    const string &secondLastGreenStation = station_names[station_names.size() - 2];
+
+    size_t lastId = stationNameIdMapping[lastGreenStation];
+    size_t secondLastId = stationNameIdMapping[secondLastGreenStation];
+
+    firstTerminal = waitingAreaData[firstId][secondId];
+    lastTerminal = waitingAreaData[lastId][secondLastId];
 }
 
 void Simulator::Simulate() {
     for (size_t tick = 0; tick < ticks; tick++) {
-        // simulate here
-        // check if you need to spawn
-        // check to update all the links
-        // check to update all the waiting area (summon + push)
-        // check to update the platform
+        UpdateAllLinks();
+        // in the worst case, the platforms need to do 2 jobs, to push the curren troon to link
+        // and take another incoming troon
+        PushAllPlatform();
+
+        // summon and push
+        SpawnTroons();
+        UpdateAllWA();
+        UpdateWaitingPlatform();
 
         if (ticks - tick <= linesToBePrinted) {
             std::stringstream ss;
             ss << tick << ". ";
             for (auto &c: {blueTroons, greenTroons, yellowTroons}) {
                 for (auto &t: c) {
-                    ss << t.GenerateDescription();
+                    ss << t->GenerateDescription();
                 }
             }
 
@@ -47,6 +87,81 @@ void Simulator::Simulate() {
     }
 
     Clean();
+}
+
+void Simulator::SpawnTroons() {
+    // g -> y -> b
+    if (greenTroonCounter < maxGreenTroon) {
+        auto t = new Troon{troonIdCounter, g, WAITING_AREA};
+        terminalGreenForward->AddTroon(t);
+        troonIdCounter++;
+        greenTroonCounter++;
+        greenTroons.push_back(t);
+    }
+
+    if (greenTroonCounter < maxGreenTroon) {
+        auto t = new Troon{troonIdCounter, g, WAITING_AREA};
+        terminalGreenBackward->AddTroon(t);
+        troonIdCounter++;
+        greenTroonCounter++;
+        greenTroons.push_back(t);
+    }
+
+    if (yellowTroonCounter < maxYellowTroon) {
+        auto t = new Troon{troonIdCounter, y, WAITING_AREA};
+        terminalYellowForward->AddTroon(t);
+        troonIdCounter++;
+        yellowTroonCounter++;
+        yellowTroons.push_back(t);
+    }
+
+    if (yellowTroonCounter < maxYellowTroon) {
+        auto t = new Troon{troonIdCounter, y, WAITING_AREA};
+        terminalYellowBackward->AddTroon(t);
+        troonIdCounter++;
+        yellowTroonCounter++;
+        yellowTroons.push_back(t);
+    }
+
+    if (blueTroonCounter < maxBlueTroon) {
+        auto t = new Troon{troonIdCounter, b, WAITING_AREA};
+        terminalBlueForward->AddTroon(t);
+        troonIdCounter++;
+        blueTroonCounter++;
+        blueTroons.push_back(t);
+    }
+
+    if (blueTroonCounter < maxBlueTroon) {
+        auto t = new Troon{troonIdCounter, b, WAITING_AREA};
+        terminalBlueBackward->AddTroon(t);
+        troonIdCounter++;
+        blueTroonCounter++;
+        blueTroons.push_back(t);
+    }
+}
+
+void Simulator::PushAllPlatform() {
+    for (size_t i = 0; i < compactPlatformData.size(); i++) {
+        compactPlatformData[i]->ProcessPushPlatform();
+    }
+}
+
+void Simulator::UpdateWaitingPlatform() {
+    for (size_t i = 0; i < compactPlatformData.size(); i++) {
+        compactPlatformData[i]->ProcessWaitPlatform();
+    }
+}
+
+void Simulator::UpdateAllWA() {
+    for (size_t i = 0; i < compactWaitingAreaData.size(); i++) {
+        compactWaitingAreaData[i]->ProcessWaitingArea();
+    }
+}
+
+void Simulator::UpdateAllLinks() {
+    for (size_t i = 0; i < compactLinkData.size(); i++) {
+        compactLinkData[i]->ProcessLink();
+    }
 }
 
 void Simulator::CreateWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities,
@@ -59,19 +174,21 @@ void Simulator::CreateWaitingPlatformLink(size_t num_stations, const vector<size
             string sourceStation = stationIdNameMapping[source];
             string destinationStation = stationIdNameMapping[destination];
 
-            auto *mtx = new std::mutex;
-            mutexArray.push_back(mtx);
+            // Source and destination can be used for debugging
+            auto *waitingArea = new WaitingArea{sourceStation, destinationStation};
+            auto *platform = new Platform{sourceStation, destinationStation, popularities[source]};
+            auto *link = new Link{sourceStation, destinationStation, distance};
 
-            WaitingArea waitingArea = WaitingArea{sourceStation, destinationStation, mtx};
-            Platform platform = Platform{popularities[source]};
-            Link link = Link{distance};
+            waitingArea->nextPlatform = platform;
+            platform->nextLink = link;
 
-            waitingArea.nextPlatform = &platform;
-            platform.nextLink = &link;
+            waitingAreaData[source][destination] = waitingArea;
+            platformData[source][destination] = platform;
+            linkData[source][destination] = link;
 
-            waitingAreaData[source].insert(std::pair(destination, waitingArea));
-            platformData[source].insert(std::pair(destination, platform));
-            linkData[source].insert(std::pair(destination, link));
+            compactLinkData.push_back(link);
+            compactPlatformData.push_back(platform);
+            compactWaitingAreaData.push_back(waitingArea);
         }
     }
 }
@@ -83,7 +200,7 @@ void Simulator::CreateIdNameIdMapping(size_t num_stations, const vector<string> 
     }
 }
 
-void Simulator::AssembleLink(const vector<string> &stationNames) {
+void Simulator::AssembleLink(const vector<string> &stationNames, Line l) {
     size_t num_trains = stationNames.size();
     string previousStation, currentStation, nextStation;
 
@@ -92,46 +209,67 @@ void Simulator::AssembleLink(const vector<string> &stationNames) {
         previousStation = stationNames[i - 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i + 1];
-        LinkStation(previousStation, currentStation, nextStation);
+        LinkStation(previousStation, currentStation, nextStation, l);
     }
 
     // the end of the forward direction
     previousStation = stationNames[num_trains - 2];
     currentStation = stationNames[num_trains - 1];
     nextStation = stationNames[num_trains - 2];
-    LinkStation(previousStation, currentStation, nextStation);
+    LinkStation(previousStation, currentStation, nextStation, l);
 
     // reverse direction
     for (size_t i = num_trains - 2; i > 0; i--) {
         previousStation = stationNames[i + 1];
         currentStation = stationNames[i];
         nextStation = stationNames[i - 1];
-        LinkStation(previousStation, currentStation, nextStation);
+        LinkStation(previousStation, currentStation, nextStation, l);
     }
 
     previousStation = stationNames[1];
     currentStation = stationNames[0];
     nextStation = stationNames[1];
-    LinkStation(previousStation, currentStation, nextStation);
+    LinkStation(previousStation, currentStation, nextStation, l);
 }
 
 void
-Simulator::LinkStation(const string &previousStation, const string &currentStation, const string &nextStation) {
+Simulator::LinkStation(const string &previousStation, const string &currentStation, const string &nextStation, Line l) {
     size_t prevId = stationNameIdMapping[previousStation];
     size_t currentId = stationNameIdMapping[currentStation];
     size_t nextId = stationNameIdMapping[nextStation];
 
-    Link previousLink = linkData[prevId].at(currentId);
-    WaitingArea currentWaiting = waitingAreaData[currentId].at(nextId);
-    previousLink.nextWa = &currentWaiting;
-}
+    Link *previousLink = linkData[prevId][currentId];
+    WaitingArea *currentWaiting = waitingAreaData[currentId][nextId];
 
-void Simulator::SpawnTroons() {
-
+    switch (l) {
+        case g:
+            previousLink->nextWaGreen = currentWaiting;
+            break;
+        case b:
+            previousLink->nextWaBlue = currentWaiting;
+            break;
+        case y:
+            previousLink->nextWaYellow = currentWaiting;
+            break;
+    }
 }
 
 void Simulator::Clean() {
-    for (auto &m: mutexArray) {
-        free(m);
+    for (auto &m: compactWaitingAreaData) {
+        delete m;
+    }
+
+    for (auto &m: compactPlatformData) {
+        delete m;
+    }
+
+    for (auto &m: compactLinkData) {
+        delete m;
+    }
+
+    for (auto &m: {blueTroons, yellowTroons, greenTroons}) {
+        for (auto &c: m) {
+            delete c;
+        }
     }
 }

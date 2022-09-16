@@ -1,43 +1,65 @@
 #include "PlatformUnit.h"
 #include <iostream>
 
-void Platform::ProcessPlatform() {
-    size_t maxCounter = popularity + 2;
-    if (!currentTroon.has_value()) return;
+using namespace std;
 
-    if (currentCounter == maxCounter) {
-        currentCounter = 0;
-        nextLink->AddTroon(currentTroon.value());
-        currentTroon = std::nullopt;
-    } else {
+void Platform::ProcessWaitPlatform() {
+    if (HasTroon()) {
         currentCounter += 1;
     }
 }
 
-void Platform::AddTroon(Troon &t) {
-    if (currentTroon.has_value()) {
+
+void Platform::ProcessPushPlatform() {
+    size_t maxCounter = popularity + 2;
+    bool isReadyToGo = currentCounter >= maxCounter;
+
+    if (!currentTroon || !isReadyToGo || nextLink->IsNotFree()) return;
+
+    currentCounter = 0;
+    nextLink->AddTroon(currentTroon);
+    currentTroon = nullptr;
+}
+
+void Platform::AddTroon(Troon *t) {
+    if (currentTroon) {
         std::string message = "Platform has another troon";
         std::cout << message << std::endl;
         throw std::invalid_argument(message);
     }
 
     currentTroon = t;
-    t.setLocation(PLATFORM);
+    t->setLocation(PLATFORM);
+}
+
+bool Platform::HasTroon() const {
+    return currentTroon != nullptr;
 }
 
 void Link::ProcessLink() {
-    if (!currentTroon.has_value()) return;
+    // TODO: should wait for 1 tick after the link becomes free if there is a train before
+    if (!currentTroon) return;
 
-    if (currentDistance == actualDistance) {
-        nextWa->AddTroon(currentTroon.value());
-        currentTroon = std::nullopt;
+    if (currentDistance == (actualDistance - 1)) {
+        switch (currentTroon->line) {
+            case g:
+                nextWaGreen->AddTroon(currentTroon);
+                break;
+            case y:
+                nextWaYellow->AddTroon(currentTroon);
+                break;
+            case b:
+                nextWaBlue->AddTroon(currentTroon);
+                break;
+        }
+        currentTroon = nullptr;
     } else {
         currentDistance++;
     }
 }
 
-void Link::AddTroon(Troon &t) {
-    if (currentTroon.has_value()) {
+void Link::AddTroon(Troon *t) {
+    if (currentTroon) {
         std::string message = "Link has another troon";
         std::cout << message << std::endl;
         throw std::invalid_argument(message);
@@ -47,23 +69,23 @@ void Link::AddTroon(Troon &t) {
     currentTroon->setLocation(LINK);
 }
 
-void WaitingArea::AddTroon(Troon &troon) {
-    troon.setSourceDestination(source, destination);
-    troon.setLocation(WAITING_AREA);
-
-    mtx->lock();
-    troonPq.push(troon);
-    mtx->unlock();
+bool Link::IsNotFree() const {
+    return currentTroon != nullptr;
 }
 
-bool WaitingArea::IsEmpty() const {
-    return (troonPq).empty();
+void WaitingArea::AddTroon(Troon *troon) {
+    troon->setSourceDestination(source, destination);
+    troon->setLocation(WAITING_AREA);
+
+    mtx.lock();
+    troonPq.push(troon);
+    mtx.unlock();
 }
 
 void WaitingArea::ProcessWaitingArea() {
-    if (IsEmpty()) return;
+    if (troonPq.empty() || nextPlatform->HasTroon()) return;
 
-    Troon top = troonPq.top();
+    Troon *top = troonPq.top();
     nextPlatform->AddTroon(top);
     troonPq.pop();
 }
