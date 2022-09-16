@@ -41,7 +41,7 @@ void simulate(size_t num_stations,
      * not.
      **/
 
-    // #ifdef DEBUG
+#ifdef DEBUG
     std::cout << "Input: " << std::endl;
     std::cout << num_stations << '\n';
 
@@ -78,7 +78,7 @@ void simulate(size_t num_stations,
     std::cout << num_blue_trains << '\n';
 
     std::cout << num_lines << '\n';
-    // #endif
+#endif
 }
 
 vector<string> extract_station_names(string &line) {
