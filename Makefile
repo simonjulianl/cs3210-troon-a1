@@ -6,7 +6,7 @@ DEBUGFLAGS:=-g
 SOURCEDIR=src
 SOURCES := $(shell find $(SOURCEDIR) -name '*.cpp')
 
-.PHONY: all clean test
+.PHONY: all clean test generateTest
 all: submission
 
 submission: main.o
@@ -21,6 +21,6 @@ clean:
 debug: main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp $(SOURCES)
 
-generateTest: 
-	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^ src/GenerateTest.cpp
-	./generateTest 17000 200000 100000 > testcases/generatedInput.in
+generateTest: src/GenerateTest.cpp
+	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^
+	./generateTest 10 10 10 > testcases/generatedInput.in
