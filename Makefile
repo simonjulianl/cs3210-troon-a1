@@ -21,6 +21,6 @@ clean:
 debug: main.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -D DEBUG -o troons main.cpp $(SOURCES)
 
-generateTest: src/GenerateTest.cpp
+generateTest: lib
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^
 	./generateTest 10 10 10 > testcases/generatedInput.in

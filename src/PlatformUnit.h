@@ -19,7 +19,6 @@ private:
         }
     };
 
-
     std::mutex mtx;
     std::priority_queue<Troon *, std::deque<Troon *>, TroonComparison> troonPq;
 public:

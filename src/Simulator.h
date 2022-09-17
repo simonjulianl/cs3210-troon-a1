@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <tuple>
+#include <set>
 #include "Troon.h"
 #include "PlatformUnit.h"
 
@@ -12,6 +13,7 @@ using std::vector;
 using std::string;
 using std::map;
 using std::tuple;
+using std::set;
 
 using adjacency_matrix = vector<vector<size_t>>;
 
@@ -21,9 +23,15 @@ private:
     size_t linesToBePrinted = 0;
     int troonIdCounter = 0;
 
-    vector<Troon *> greenTroons;
-    vector<Troon *> yellowTroons;
-    vector<Troon *> blueTroons;
+    struct TroonLexicographyComparison {
+        bool operator()(const Troon *a, const Troon *b) const {
+            return std::to_string(a->id) < std::to_string(b->id);
+        }
+    };
+
+    set<Troon *, TroonLexicographyComparison> greenTroons;
+    set<Troon *, TroonLexicographyComparison> yellowTroons;
+    set<Troon *, TroonLexicographyComparison> blueTroons;
 
     size_t greenTroonCounter = 0;
     size_t yellowTroonCounter = 0;

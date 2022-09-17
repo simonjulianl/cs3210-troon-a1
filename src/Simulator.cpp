@@ -96,7 +96,7 @@ void Simulator::SpawnTroons() {
         terminalGreenForward->AddTroon(t);
         troonIdCounter++;
         greenTroonCounter++;
-        greenTroons.push_back(t);
+        greenTroons.insert(t);
     }
 
     if (greenTroonCounter < maxGreenTroon) {
@@ -104,7 +104,7 @@ void Simulator::SpawnTroons() {
         terminalGreenBackward->AddTroon(t);
         troonIdCounter++;
         greenTroonCounter++;
-        greenTroons.push_back(t);
+        greenTroons.insert(t);
     }
 
     if (yellowTroonCounter < maxYellowTroon) {
@@ -112,7 +112,7 @@ void Simulator::SpawnTroons() {
         terminalYellowForward->AddTroon(t);
         troonIdCounter++;
         yellowTroonCounter++;
-        yellowTroons.push_back(t);
+        yellowTroons.insert(t);
     }
 
     if (yellowTroonCounter < maxYellowTroon) {
@@ -120,7 +120,7 @@ void Simulator::SpawnTroons() {
         terminalYellowBackward->AddTroon(t);
         troonIdCounter++;
         yellowTroonCounter++;
-        yellowTroons.push_back(t);
+        yellowTroons.insert(t);
     }
 
     if (blueTroonCounter < maxBlueTroon) {
@@ -128,7 +128,7 @@ void Simulator::SpawnTroons() {
         terminalBlueForward->AddTroon(t);
         troonIdCounter++;
         blueTroonCounter++;
-        blueTroons.push_back(t);
+        blueTroons.insert(t);
     }
 
     if (blueTroonCounter < maxBlueTroon) {
@@ -136,7 +136,7 @@ void Simulator::SpawnTroons() {
         terminalBlueBackward->AddTroon(t);
         troonIdCounter++;
         blueTroonCounter++;
-        blueTroons.push_back(t);
+        blueTroons.insert(t);
     }
 }
 
