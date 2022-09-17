@@ -36,3 +36,6 @@ generateTest
 
 # IDE config
 .idea
+
+# Testcases
+./testcases/generatedInput.in

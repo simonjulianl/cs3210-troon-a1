@@ -110,5 +110,6 @@ int main(int argc, char const *argv[]) {
 
   std::cout << num_ticks << std::endl;
   std::cout << num_trains << ' ' << num_trains << ' ' << num_trains << std::endl;
-  std::cout << 5 << std::endl;
+  int num_lines_to_be_printed = 1;
+  std::cout << num_lines_to_be_printed << std::endl;
 }

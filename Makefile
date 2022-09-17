@@ -9,8 +9,12 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.cpp')
 APPNAME:=troons
 TESTCASEFILE:= $(TESTCASESDIR)/generatedInput.in
 
-.PHONY: all clean test generateTest quickTest
+.PHONY: all clean test generateTest quickTest compareTimingSeq1
 all: submission
+
+compareTimingSeq1: clean submission generateTest
+	perf stat -o result/our_result.out -e cycles,instructions,cache-misses ./$(APPNAME) $(TESTCASEFILE)
+	perf stat -o result/troons_seq1_result.out -e cycles,instructions,cache-misses ./troons_seq $(TESTCASEFILE)
 
 quickTest: clean submission generateTest
 	./$(APPNAME) $(TESTCASEFILE)
@@ -29,4 +33,4 @@ debug: main.cpp
 
 generateTest: lib/GenerateTest.cpp
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^
-	./generateTest 10 10 10 > $(TESTCASEFILE)
+	./generateTest 1000 1000 1000 > $(TESTCASEFILE)
