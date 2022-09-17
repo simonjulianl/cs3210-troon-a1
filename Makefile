@@ -12,9 +12,11 @@ TESTCASEFILE:= $(TESTCASESDIR)/generatedInput.in
 .PHONY: all clean test generateTest quickTest compareTimingSeq1
 all: submission
 
-compareTimingSeq1: clean submission generateTest
-	perf stat -o result/our_result.out -e cycles,instructions,cache-misses ./$(APPNAME) $(TESTCASEFILE)
-	perf stat -o result/troons_seq1_result.out -e cycles,instructions,cache-misses ./troons_seq $(TESTCASEFILE)
+compareTimingSeq: clean submission generateTest
+	mkdir -p result
+	perf stat -o result/our_result.out ./$(APPNAME) $(TESTCASEFILE)
+	perf stat -o result/troons_seq1_result.out ./troons_seq $(TESTCASEFILE)
+	perf stat -o result/troons_seq2_result.out ./troons_seq2 $(TESTCASEFILE)
 
 quickTest: clean submission generateTest
 	./$(APPNAME) $(TESTCASEFILE)

@@ -38,4 +38,4 @@ generateTest
 .idea
 
 # Testcases
-./testcases/generatedInput.in
+testcases/generatedInput.in

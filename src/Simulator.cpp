@@ -1,6 +1,9 @@
 #include "Simulator.h"
 #include <iostream>
 #include <sstream>
+#include <omp.h>
+
+#define THREAD_NUM 1
 
 using namespace std;
 
@@ -19,6 +22,7 @@ Simulator::Simulator(
         size_t num_lines
 ) : ticks{ticks}, linesToBePrinted{num_lines}, maxGreenTroon{num_green_trains}, maxYellowTroon{num_yellow_trains},
     maxBlueTroon{num_blue_trains} {
+    omp_set_num_threads(THREAD_NUM);
 
     CreateIdNameIdMapping(num_stations, station_names);
     CreateWaitingPlatformLink(num_stations, popularities, mat);
@@ -141,24 +145,28 @@ void Simulator::SpawnTroons() {
 }
 
 void Simulator::PushAllPlatform() {
+#pragma omp parallel for
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessPushPlatform();
     }
 }
 
 void Simulator::UpdateWaitingPlatform() {
+#pragma omp parallel for
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessWaitPlatform();
     }
 }
 
 void Simulator::UpdateAllWA() {
+#pragma omp parallel for
     for (size_t i = 0; i < compactWaitingAreaData.size(); i++) {
         compactWaitingAreaData[i]->ProcessWaitingArea();
     }
 }
 
 void Simulator::UpdateAllLinks() {
+#pragma omp parallel for
     for (size_t i = 0; i < compactLinkData.size(); i++) {
         compactLinkData[i]->ProcessLink();
     }

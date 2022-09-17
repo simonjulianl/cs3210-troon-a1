@@ -1,5 +1,6 @@
 #include "PlatformUnit.h"
 #include <iostream>
+#include <omp.h>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ bool Platform::HasTroon() const {
 void Link::ProcessLink() {
     if (!currentTroon) {
         currentCounter++;
-        return;   
+        return;
     }
 
     if (currentDistance == (actualDistance - 1)) {
@@ -84,9 +85,8 @@ void WaitingArea::AddTroon(Troon *troon) {
     troon->setSourceDestination(source, destination);
     troon->setLocation(WAITING_AREA);
 
-    mtx.lock();
+#pragma omp critical
     troonPq.push(troon);
-    mtx.unlock();
 }
 
 void WaitingArea::ProcessWaitingArea() {
