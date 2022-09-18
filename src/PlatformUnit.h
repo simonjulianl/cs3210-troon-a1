@@ -46,17 +46,11 @@ public:
     size_t actualDistance = 0;
     size_t currentDistance = 0;
 
-    string source;
-    string destination;
-
-    Link(string source, string destination, size_t distance) : actualDistance{distance}, source{std::move(source)},
-                                                               destination{std::move(destination)} {}
+    Link(size_t distance) : actualDistance{distance} {}
 
     void ProcessLink();
 
     void AddTroon(Troon *t);
-
-    bool IsNotFree() const;
 
     bool SafeToGo() const;
 };
@@ -66,15 +60,10 @@ public:
     Troon *currentTroon = nullptr;
     Link *nextLink = nullptr;
 
-    size_t popularity = 0;
     size_t currentCounter = 0;
+    size_t maxCounter = 0;
 
-    string source;
-    string destination;
-
-    Platform(string source, string destination, size_t popularity) : popularity{popularity},
-                                                                     source{std::move(source)},
-                                                                     destination{std::move(destination)} {};
+    Platform(size_t popularity) : maxCounter{popularity + 2} {};
 
     void ProcessWaitPlatform();
 

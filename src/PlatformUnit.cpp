@@ -1,6 +1,4 @@
 #include "PlatformUnit.h"
-#include <iostream>
-#include <omp.h>
 
 using namespace std;
 
@@ -12,10 +10,9 @@ void Platform::ProcessWaitPlatform() {
 
 
 void Platform::ProcessPushPlatform() {
-    size_t maxCounter = popularity + 2;
     bool isReadyToGo = currentCounter >= maxCounter;
 
-    if (!currentTroon || !isReadyToGo || nextLink->IsNotFree() || !nextLink->SafeToGo()) return;
+    if (!currentTroon || !isReadyToGo || !nextLink->SafeToGo()) return;
 
     currentCounter = 0;
     nextLink->AddTroon(currentTroon);
@@ -23,12 +20,6 @@ void Platform::ProcessPushPlatform() {
 }
 
 void Platform::AddTroon(Troon *t) {
-    if (currentTroon) {
-        std::string message = "Platform has another troon";
-        std::cout << message << std::endl;
-        throw std::invalid_argument(message);
-    }
-
     currentTroon = t;
     t->setLocation(PLATFORM);
 }
@@ -63,22 +54,12 @@ void Link::ProcessLink() {
 }
 
 void Link::AddTroon(Troon *t) {
-    if (currentTroon) {
-        std::string message = "Link has another troon";
-        std::cout << message << std::endl;
-        throw std::invalid_argument(message);
-    }
-
     currentTroon = t;
     currentTroon->setLocation(LINK);
 }
 
-bool Link::IsNotFree() const {
-    return currentTroon != nullptr;
-}
-
 bool Link::SafeToGo() const {
-    return currentCounter >= 1;
+    return currentCounter >= 1 && currentTroon == nullptr;
 }
 
 void WaitingArea::AddTroon(Troon *troon) {

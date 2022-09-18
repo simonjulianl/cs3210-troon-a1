@@ -41,23 +41,16 @@ private:
     size_t maxYellowTroon;
     size_t maxBlueTroon;
 
-    map<string, size_t> stationNameIdMapping;
-    map<size_t, string> stationIdNameMapping;
+    size_t num_stations;
 
-    map<size_t, map<size_t, WaitingArea *>> waitingAreaData;
-    map<size_t, map<size_t, Platform *>> platformData;
-    map<size_t, map<size_t, Link *>> linkData;
+    WaitingArea ***waitingAreaData;
+    Link ***linkData;
 
     vector<Platform *> compactPlatformData;
     vector<WaitingArea *> compactWaitingAreaData;
     vector<Link *> compactLinkData;
 
-    WaitingArea *terminalGreenForward;
-    WaitingArea *terminalGreenBackward;
-    WaitingArea *terminalYellowForward;
-    WaitingArea *terminalYellowBackward;
-    WaitingArea *terminalBlueForward;
-    WaitingArea *terminalBlueBackward;
+    vector<WaitingArea *> terminals;
 
 public:
     Simulator(
@@ -82,23 +75,19 @@ public:
     void Clean();
 
 private:
-    void CreateIdNameIdMapping(size_t num_stations, const vector<string> &station_names);
-
     void
-    CreateWaitingPlatformLink(size_t num_stations, const vector<size_t> &popularities, const adjacency_matrix &mat);
+    CreateWaitingPlatformLink(size_t ns, const vector<size_t> &popularities, const adjacency_matrix &mat,
+                              const vector<string> &stationIdNameMapping);
 
-    void LinkStation(const string &previousStation, const string &currentStation, const string &nextStation, Line l);
+    void LinkStation(const size_t &prevId, const size_t &currentId, const size_t &nextId, Line l);
 
-    void AssembleLink(const vector<string> &stationNames, Line l);
+    void AssembleLink(const vector<size_t> &stationNames, Line l);
 
     void UpdateAllLinks();
 
     void UpdateAllWA();
 
     void UpdateWaitingPlatform();
-
-    void GetFirstLastTerminals(const vector<string> &station_names, WaitingArea *&firstTerminal,
-                               WaitingArea *&lastTerminal);
 
     void PushAllPlatform();
 };

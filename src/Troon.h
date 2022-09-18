@@ -22,25 +22,13 @@ public:
     ) : id{id}, line{line}, location{location} {};
 
     void setSourceDestination(string sourceP, string destinationP) {
-        this->source = std::move(sourceP);
-        this->destination = std::move(destinationP);
+        source = std::move(sourceP);
+        destination = std::move(destinationP);
     }
 
     void setLocation(Location l) {
-        this->location = l;
+        location = l;
     }
-
-    bool operator<(Troon const &obj) const {
-        return this->id < obj.id;
-    };
-
-    bool operator==(Troon const &obj) const {
-        return this->id == obj.id;
-    };
-
-    bool operator!=(Troon const &obj) const {
-        return this->id != obj.id;
-    };
 
     string GenerateDescription() const;
 };
