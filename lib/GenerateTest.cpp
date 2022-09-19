@@ -41,13 +41,42 @@ int main(int argc, char const *argv[]) {
   }
   std::cout << ss2.str() << std::endl;
 
+  struct IncGenerator {
+    int current_;
+    IncGenerator (int start) : current_(start) {}
+    int operator() () { return current_++; }
+  };
+
+  std::vector<int> g(num_stations / 2);
+  IncGenerator gen1 (0);
+  std::generate(g.begin(), g.end(), gen1);
+  std::random_shuffle(g.begin(), g.end());
+
+  std::vector<int> y(num_stations / 2);
+  IncGenerator gen2 (num_stations / 3);
+  std::generate(y.begin(), y.end(), gen2);
+  std::random_shuffle(y.begin(), y.end());
+
+  std::vector<int> b(num_stations / 2);
+  IncGenerator gen3 (num_stations / 2);
+  std::generate(b.begin(), b.end(), gen3);
+  std::random_shuffle(b.begin(), b.end());
+
   // weight of each link
   vector<vector<int>> link(num_stations , vector<int> (num_stations, 0));
-  for (int i = 0; i < num_stations; i++) {
-    for (int j = 0; j < num_stations; j++) {
-      link[i][j] = rand() % 9 + 1;
-      link[j][i] = link[i][j];
-    }
+  for (std::vector<int>::size_type i = 0; i < g.size() - 1; i++) {
+    link[g[i]][g[i + 1]] = rand() % 9 + 1;
+    link[g[i + 1]][g[i]] = link[g[i]][g[i + 1]];
+  }
+
+  for (std::vector<int>::size_type i = 0; i < y.size() - 1; i++) {
+    link[y[i]][y[i + 1]] = rand() % 9 + 1;
+    link[y[i + 1]][y[i]] = link[y[i]][y[i + 1]];
+  }
+
+  for (std::vector<int>::size_type i = 0; i < b.size() - 1; i++) {
+    link[b[i]][b[i + 1]] = rand() % 9 + 1;
+    link[b[i + 1]][b[i]] = link[b[i]][b[i + 1]];
   }
 
   for (int i = 0; i < num_stations; i++) {
@@ -62,17 +91,6 @@ int main(int argc, char const *argv[]) {
   }
 
   // stations in each line
-  struct IncGenerator {
-    int current_;
-    IncGenerator (int start) : current_(start) {}
-    int operator() () { return current_++; }
-  };
-
-
-  std::vector<int> g(num_stations / 2);
-  IncGenerator gen1 (0);
-  std::generate(g.begin(), g.end(), gen1);
-  std::random_shuffle(g.begin(), g.end());
   std::stringstream ss4;
   for (int i = 0; i < num_stations / 2; i++) {
     ss4 << 'a' << g[i];
@@ -82,10 +100,6 @@ int main(int argc, char const *argv[]) {
   }
   std::cout << ss4.str() << std::endl;
 
-  std::vector<int> y(num_stations / 2);
-  IncGenerator gen2 (num_stations / 3);
-  std::generate(y.begin(), y.end(), gen2);
-  std::random_shuffle(y.begin(), y.end());
   std::stringstream ss5;
   for (int i = 0; i < num_stations / 2; i++) {
     ss5 << 'a' << y[i];
@@ -95,10 +109,6 @@ int main(int argc, char const *argv[]) {
   }
   std::cout << ss5.str() << std::endl;
 
-  std::vector<int> b(num_stations / 2);
-  IncGenerator gen3 (num_stations / 2);
-  std::generate(b.begin(), b.end(), gen3);
-  std::random_shuffle(b.begin(), b.end());
   std::stringstream ss6;
   for (int i = 0; i < num_stations / 2; i++) {
     ss6 << 'a' << b[i];
@@ -110,6 +120,6 @@ int main(int argc, char const *argv[]) {
 
   std::cout << num_ticks << std::endl;
   std::cout << num_trains << ' ' << num_trains << ' ' << num_trains << std::endl;
-  int num_lines_to_be_printed = 0;
+  int num_lines_to_be_printed = 5;
   std::cout << num_lines_to_be_printed << std::endl;
 }
