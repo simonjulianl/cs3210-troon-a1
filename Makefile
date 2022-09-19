@@ -15,7 +15,7 @@ all: submission
 compareTimingSeq: clean submission generateTest
 	mkdir -p result
 	perf stat -o result/our_result.out ./$(APPNAME) $(TESTCASEFILE)
-	#perf stat -o result/troons_seq1_result.out ./troons_seq $(TESTCASEFILE)
+	perf stat -o result/troons_seq1_result.out ./troons_seq $(TESTCASEFILE)
 	perf stat -o result/troons_seq2_result.out ./troons_seq2 $(TESTCASEFILE)
 
 quickTest: clean submission generateTest
@@ -35,4 +35,4 @@ debug: main.cpp
 
 generateTest: lib/GenerateTest.cpp
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^
-	./generateTest 500 1000 10000 > $(TESTCASEFILE)
+	./generateTest 20000 20000 20000 > $(TESTCASEFILE)
