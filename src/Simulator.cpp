@@ -3,7 +3,7 @@
 #include <sstream>
 #include <omp.h>
 
-#define THREAD_NUM 8
+#define THREAD_NUM 40
 
 using namespace std;
 
