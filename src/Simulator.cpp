@@ -149,28 +149,28 @@ void Simulator::SpawnTroons() {
 }
 
 void Simulator::PushAllPlatform() {
-#pragma omp parallel for shared (compactPlatformData)
+#pragma omp parallel for private(compactPlatformData)
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessPushPlatform();
     }
 }
 
 void Simulator::UpdateWaitingPlatform() {
-#pragma omp parallel for shared(compactPlatformData)
+#pragma omp parallel for private(compactPlatformData)
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessWaitPlatform();
     }
 }
 
 void Simulator::UpdateAllWA() {
-#pragma omp parallel for shared(compactWaitingAreaData)
+#pragma omp parallel for private(compactWaitingAreaData)
     for (size_t i = 0; i < compactWaitingAreaData.size(); i++) {
         compactWaitingAreaData[i]->ProcessWaitingArea();
     }
 }
 
 void Simulator::UpdateAllLinks() {
-#pragma omp parallel for shared(compactLinkData)
+#pragma omp parallel for private(compactLinkData)
     for (size_t i = 0; i < compactLinkData.size(); i++) {
         compactLinkData[i]->ProcessLink();
     }

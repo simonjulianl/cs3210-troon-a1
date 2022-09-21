@@ -26,10 +26,10 @@ srun rsync -av --progress --delete "$NFS_DIR" "$LOCAL_DIR/"
 PROGRAM_OUTFILE="${SLURM_JOB_NAME}-${SLURM_JOB_ID}.out"
 if [[ -f "$LOCAL_DIR/$EXECUTABLE" ]]; then
 	echo "Running executable from local folder: $LOCAL_DIR/$EXECUTABLE $EXECUTABLE_ARGS"
-	srun perf stat "$LOCAL_DIR/$EXECUTABLE" "$LOCAL_DIR/$EXECUTABLE_ARGS" > $PROGRAM_OUTFILE 2>&1 
+	srun perf stat -r 5 "$LOCAL_DIR/$EXECUTABLE" "$LOCAL_DIR/$EXECUTABLE_ARGS" > $PROGRAM_OUTFILE 2>&1 
 else
 	echo "Running executable from anywhere in PATH: $EXECUTABLE $EXECUTABLE_ARGS"
-	srun perf stat $EXECUTABLE "$LOCAL_DIR/$EXECUTABLE_ARGS" > $PROGRAM_OUTFILE 2>&1
+	srun perf stat -r 5 $EXECUTABLE "$LOCAL_DIR/$EXECUTABLE_ARGS" > $PROGRAM_OUTFILE 2>&1
 fi
 
 
