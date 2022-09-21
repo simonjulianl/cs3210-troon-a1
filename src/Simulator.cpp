@@ -75,9 +75,12 @@ void Simulator::Simulate() {
             // in the worst case, the platforms need to do 2 jobs, to push the curren troon to link
             // and take another incoming troon
             PushAllPlatform();
+        }
 
-            // summon and push
-            SpawnTroons();
+        // summon and push
+        SpawnTroons();
+#pragma omp parallel
+        {
             UpdateAllWA();
             UpdateWaitingPlatform();
         }
