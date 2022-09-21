@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
   std::cout << ss.str() << std::endl;
 
   // weight of each station
-  srand (time(NULL));
+  srand (0);
   std::stringstream ss2;
   for (int i = 0; i < num_stations; i++) {
     int temp = rand() % 9 + 1;
