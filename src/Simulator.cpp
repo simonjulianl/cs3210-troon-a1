@@ -69,15 +69,18 @@ Simulator::Simulator(
 
 void Simulator::Simulate() {
     for (size_t tick = 0; tick < ticks; tick++) {
-        UpdateAllLinks();
-        // in the worst case, the platforms need to do 2 jobs, to push the curren troon to link
-        // and take another incoming troon
-        PushAllPlatform();
+#pragma omp parallel
+        {
+            UpdateAllLinks();
+            // in the worst case, the platforms need to do 2 jobs, to push the curren troon to link
+            // and take another incoming troon
+            PushAllPlatform();
 
-        // summon and push
-        SpawnTroons();
-        UpdateAllWA();
-        UpdateWaitingPlatform();
+            // summon and push
+            SpawnTroons();
+            UpdateAllWA();
+            UpdateWaitingPlatform();
+        }
 
         if (ticks - tick <= linesToBePrinted) {
             std::stringstream ss;
@@ -149,28 +152,28 @@ void Simulator::SpawnTroons() {
 }
 
 void Simulator::PushAllPlatform() {
-#pragma omp parallel for private(compactPlatformData)
+#pragma omp for
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessPushPlatform();
     }
 }
 
 void Simulator::UpdateWaitingPlatform() {
-#pragma omp parallel for private(compactPlatformData)
+#pragma omp for
     for (size_t i = 0; i < compactPlatformData.size(); i++) {
         compactPlatformData[i]->ProcessWaitPlatform();
     }
 }
 
 void Simulator::UpdateAllWA() {
-#pragma omp parallel for private(compactWaitingAreaData)
+#pragma omp for
     for (size_t i = 0; i < compactWaitingAreaData.size(); i++) {
         compactWaitingAreaData[i]->ProcessWaitingArea();
     }
 }
 
 void Simulator::UpdateAllLinks() {
-#pragma omp parallel for private(compactLinkData)
+#pragma omp for
     for (size_t i = 0; i < compactLinkData.size(); i++) {
         compactLinkData[i]->ProcessLink();
     }
