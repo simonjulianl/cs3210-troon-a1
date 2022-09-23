@@ -44,11 +44,15 @@ Simulator::Simulator(
 
     // Optimization, convert everything to id and pass the array of id
     vector<size_t> green_station(green_station_names.size());
-    vector<size_t> blue_station(green_station_names.size());
-    vector<size_t> yellow_station(green_station_names.size());
     for (size_t i = 0; i < green_station_names.size(); i++) {
         green_station[i] = stationNameIdMapping[green_station_names[i]];
+    }
+    vector<size_t> blue_station(blue_station_names.size());
+    for (size_t i = 0; i < blue_station_names.size(); i++) {
         blue_station[i] = stationNameIdMapping[blue_station_names[i]];
+    }
+    vector<size_t> yellow_station(yellow_station_names.size());
+    for (size_t i = 0; i < yellow_station_names.size(); i++) {
         yellow_station[i] = stationNameIdMapping[yellow_station_names[i]];
     }
 
