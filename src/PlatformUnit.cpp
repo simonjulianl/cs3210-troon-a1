@@ -48,6 +48,7 @@ void Link::ProcessLink() {
         }
         currentTroon = nullptr;
         currentCounter = 0;
+        currentDistance = 0;
     } else {
         currentDistance++;
     }
