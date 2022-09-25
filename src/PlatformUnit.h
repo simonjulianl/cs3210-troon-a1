@@ -4,6 +4,7 @@
 #include <mutex>
 #include <queue>
 #include <utility>
+#include <omp.h>
 #include "Troon.h"
 
 class Platform;
@@ -19,6 +20,7 @@ private:
         }
     };
 
+    omp_lock_t writelock;
     std::priority_queue<Troon *, std::deque<Troon *>, TroonComparison> troonPq;
     std::deque<Troon *> troonQ;
 public:
@@ -28,11 +30,17 @@ public:
 
     WaitingArea(string source, string destination) :
             source{std::move(source)},
-            destination{std::move(destination)} {};
+            destination{std::move(destination)} {
+        omp_init_lock(&writelock);
+    };
 
     void AddTroon(Troon *troon);
 
     void ProcessWaitingArea();
+
+    ~WaitingArea() {
+        omp_destroy_lock(&writelock);
+    }
 };
 
 class Link {

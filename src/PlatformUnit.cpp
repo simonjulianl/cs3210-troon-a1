@@ -67,8 +67,9 @@ void WaitingArea::AddTroon(Troon *troon) {
     troon->setSourceDestination(source, destination);
     troon->setLocation(WAITING_AREA);
 
-#pragma omp critical
+    omp_set_lock(&writelock);
     troonPq.push(troon);
+    omp_unset_lock(&writelock);
 }
 
 void WaitingArea::ProcessWaitingArea() {
