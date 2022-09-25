@@ -91,7 +91,7 @@ void Simulator::Simulate() {
 
         if (ticks - tick <= linesToBePrinted) {
             std::stringstream ss;
-            ss << tick << ". ";
+            ss << tick << ": ";
             for (auto &c: {blueTroons, greenTroons, yellowTroons}) {
                 for (auto &t: c) {
                     ss << t->GenerateDescription();
