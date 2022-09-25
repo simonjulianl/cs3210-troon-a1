@@ -72,9 +72,14 @@ void WaitingArea::AddTroon(Troon *troon) {
 }
 
 void WaitingArea::ProcessWaitingArea() {
-    if (troonPq.empty() || nextPlatform->HasTroon()) return;
+    while (!troonPq.empty()) {
+        Troon *temp = troonPq.top();
+        troonQ.push_back(temp);
+        troonPq.pop();
+    }
+    if (troonQ.empty() || nextPlatform->HasTroon()) return;
 
-    Troon *top = troonPq.top();
+    Troon *top = troonQ.front();
     nextPlatform->AddTroon(top);
-    troonPq.pop();
+    troonQ.pop_front();
 }

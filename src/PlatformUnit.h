@@ -20,6 +20,7 @@ private:
     };
 
     std::priority_queue<Troon *, std::deque<Troon *>, TroonComparison> troonPq;
+    std::deque<Troon *> troonQ;
 public:
     string source;
     string destination;

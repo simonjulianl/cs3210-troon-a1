@@ -35,4 +35,4 @@ debug: main.cpp
 
 generateTest: lib/GenerateTest.cpp
 	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -o generateTest $^
-	./generateTest 10 10 100 > $(TESTCASEFILE)
+	./generateTest 4 4 16 > $(TESTCASEFILE)
